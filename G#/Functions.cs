@@ -2,11 +2,11 @@ namespace Wall_E
 {
     public class Functions
     {
-        private static Dictionary<string, Statement.Function> functions = new();
+        private static Dictionary<string, Function> functions = new();
 
-        public Functions(string name, Statement.Function function)
+        public Functions()
         {
-            functions.Add(name, function);
+            functions=new();
         }
 
         public static bool Contains(string name)
@@ -15,13 +15,13 @@ namespace Wall_E
             return false;
         }
 
-        public static Statement.Function Get(string name)
+        public static Function Get(string name)
         {
             if (functions.ContainsKey(name)) return functions[name];
             throw new ERROR(ERROR.ErrorType.SemanticError, "function " + name + " is not defined");
         }
 
-        public static void AddFun(string name, Statement.Function function = null!)
+        public static void AddFun(string name, Function function = null!)
         {
             if (functions.ContainsKey(name))
             {
@@ -44,6 +44,7 @@ namespace Wall_E
             AddFun("randoms");
             AddFun("points");
             AddFun("samples");
+            AddFun("point");
         }
     }
 }

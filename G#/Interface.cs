@@ -3,21 +3,21 @@ namespace Wall_E
 {
     public interface IDrawable
     {
-        public void Draw(IPaint p1);
+        public void Draw(IPaint p1,Color color);
     }
 
     public interface IPaint
     {
         int Width { get; }
         int Height { get; }
-        public void DrawPoint(Point p1);
-        public void DrawCircle(Circle c1);
-        public void DrawLine(Line l1);
-        public void DrawSegment(Segment s);
-        public void DrawRay(Ray r1);
-        public void DrawArc(Arc a1);
+        public void DrawPoint(Point p1,Color color);
+        public void DrawCircle(Circle c1,Color color);
+        public void DrawLine(Line l1,Color color);
+        public void DrawSegment(Segment s,Color cloro);
+        public void DrawRay(Ray r1,Color color);
+        public void DrawArc(Arc a1,Color color);
+        public void DrawSeq(Seq seq,Color color);
     }
-
     public interface IIntersectable<T>
     {
         public List<Point> Intersect(T f1);
@@ -32,17 +32,26 @@ namespace Wall_E
 
     public interface IVisitor
     {
-        public object Visit(Dictionary<string, (Type, object)> values);
+        public object Visit(Dictionary<string, object> values);
     }
 
     public interface IGenerateRandom
     {
-        Point GeneratePoint();
-        Line GenerateLine();
+        public Point GeneratePoint();
+        public Line GenerateLine();
         public Segment GenerateSegment();
         public Circle GenerateCircle();
         public Ray GenerateRay();
         public Arc GenerateArc();
+        public Seq PointSeq();
+        public Seq LineSeq();
+        public Seq SegmentSeq();
+        public Seq RaySeq();
+        public Seq CircleSeq();
+        public Seq ArcSeq();
+        public Seq randoms();
+        public Seq Points(Figure fig);
+
     }
 
 }

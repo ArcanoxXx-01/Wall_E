@@ -48,12 +48,15 @@ namespace Wall_E
             Else,
             Let,
             In,
+            Color,
+            ThreePoints,
+            Import,
         }
 
         public TokenType type { get; private set; }
-        public string value { get; private set; }
+        public object value { get; private set; }
 
-        public Token(TokenType type, string value)
+        public Token(TokenType type, object value)
         {
             this.type = type;
 

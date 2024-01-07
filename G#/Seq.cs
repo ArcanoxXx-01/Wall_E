@@ -1,29 +1,62 @@
 using System.Collections;
 
 namespace Wall_E;
-public class Seq<T> : IEnumerable<T>
+public class Seq : IEnumerable, IDrawable
 {
     private bool IsInfinite;
-    List<T> values;
+    public List<object> values
+    { get; private set; }
 
     public int count { get; private set; }
 
-    public Seq(List<T> values, bool IsInfinite)
+    public Seq(List<object> values, bool IsInfinite)
     {
         this.values = values;
         this.IsInfinite = IsInfinite;
         if (IsInfinite) count = -1;
         else count = values.Count;
     }
-    
 
-    public IEnumerator<T> GetEnumerator()
+    public object this[int index]
     {
-        throw new NotImplementedException();
+        get { return values[index]; }
+    }
+
+    public Seq Rest(int index)
+    {
+        List<object> seq = new();
+        for (int i = index ; i < values?.Count; i++)
+        {
+            seq.Add(values[i]);
+        }
+        return new Seq(seq, IsInfinite);
+    }
+
+    public Seq SumaSeq(Seq seq)
+    {
+        List<object> obj = new();
+        foreach (var x in this)
+        {
+            obj.Add(x);
+        }
+        foreach (var t in seq)
+        {
+            obj.Add(t);
+        }
+
+        return new Seq(obj, false);
+    }
+    public IEnumerator GetEnumerator()
+    {
+        return values.GetEnumerator();
     }
 
     IEnumerator IEnumerable.GetEnumerator()
     {
-        throw new NotImplementedException();
+        return values.GetEnumerator();
+    }
+    public void Draw(IPaint paint, Color color)
+    {
+        paint.DrawSeq(this, color);
     }
 }

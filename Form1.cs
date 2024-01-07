@@ -14,17 +14,45 @@ public partial class Aplication : Form, IAplication
 
     private void Run_Click(object sender, EventArgs e)
     {
-        Consola.Text="";
-        Bitmap map = new Bitmap(Plano.Width, Plano.Height);
-        Paint paint = new Paint(pen, Graphics.FromImage(map), Plano.Width, Plano.Height);
+        Consola.Text = "";
+        if (Entrada.Text == null)
+        {
+            Consola.Text = "An empty line has been entered";
+            return;
+        }
+        if (Entrada.Text.Length == 0)
+        {
+            Consola.Text = " An empty line has been entered";
+            return;
+        }
 
-        Evaluator evaluator = new Evaluator(paint, this, Entrada.Text);
+        foreach (char x in Entrada.Text)
+        {
+            if (x != '\n' && x != ' ')
+            {
+                Bitmap map = new Bitmap(Plano.Width, Plano.Height);
+                Paint paint = new Paint(pen, Graphics.FromImage(map), Plano.Width, Plano.Height);
+                Evaluator evaluator = new Evaluator(paint, this, Entrada.Text);
+                if (Evaluator.errors.Count != 0)
+                {
+                    this.PrintErrors(Evaluator.errors);
+                }
+                else
+                {
+                    foreach (var t in Evaluator.Dibuja)
+                    {
+                        t.Item1.Draw(paint, t.Item2);
+                    }
+                }
+                Plano.Image = map;
+                return;
+            }
+        }
+        Consola.Text = " An empty line has been entered";
 
-
-        Plano.Image = map;
     }
 
-    private void Clear_Click(object sender, EventArgs e)
+    private void Clean_Click(object sender, EventArgs e)
     {
         Entrada.Text = "";
         Consola.Text = "";
@@ -33,7 +61,12 @@ public partial class Aplication : Form, IAplication
 
     private void Save_Click(object sender, EventArgs e)
     {
-
+        if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+        {
+            StreamWriter file = new StreamWriter(saveFileDialog1.FileName, true);
+            file.Write(Entrada.Text);
+            file.Close();
+        }
     }
 
     public void Print(string message)

@@ -104,7 +104,7 @@ namespace Wall_E
 
                             consume(Token.TokenType.PuntoYComa, " Expected ';' after expression in line " + currentLine + " " + current);
 
-                            Statement.Function exp = new Statement.Function(name, arguments, body);
+                            Function exp = new Function(name, arguments, body);
 
                             Functions.AddFun(name, exp);
 
@@ -113,6 +113,7 @@ namespace Wall_E
                             if (match(Token.TokenType.EOF)) return;
 
                             Parse();
+                            return;
                         }
                     }
                 }
@@ -140,7 +141,7 @@ namespace Wall_E
 
         private Expression seq()
         {
-            Expression expr = logical();
+            Expression expr = range();
 
             if (match(Token.TokenType.Coma))
             {
@@ -149,10 +150,8 @@ namespace Wall_E
                     throw new ERROR(ERROR.ErrorType.SyntaxError, " Cannot make a statement as arguments of the sequence in line " + currentLine + " in " + current);
                 }
 
-                List<Expression> args = new()
-            {
-                expr
-            };
+                List<Expression> args = new() { expr };
+
                 while (match(Token.TokenType.Coma))
                 {
                     advance();
@@ -167,7 +166,7 @@ namespace Wall_E
                     args.Add(arg);
                 }
 
-                Expression.Sequence seq = new Expression.Sequence(args);
+                Sequence seq = new Sequence(args);
 
                 if (match(Token.TokenType.Asign))
                 {
@@ -182,7 +181,7 @@ namespace Wall_E
                         throw new ERROR(ERROR.ErrorType.SyntaxError, " Cannot make a statement as value of the sequence in line " + currentLine + " in " + current);
                     }
 
-                    if (value is Expression.Sequence)
+                    if (value is Sequence)
                     {
                         if (tokens[current - 1].type != Token.TokenType.LlaveCerrada && tokens[count].type != Token.TokenType.LlaveAbierta)
                         {
@@ -190,15 +189,46 @@ namespace Wall_E
                         }
                     }
 
-                    return new Statement.DecSequence(seq, value);
+                    return new DecSequence(seq, value);
                 }
 
                 return seq;
+
             }
 
             return expr;
         }
 
+        private Expression range()
+        {
+            Expression expr = logical();
+
+            if (match(Token.TokenType.ThreePoints))
+            {
+                advance();
+
+                if (match(Token.TokenType.LlaveCerrada))
+                {
+                    return new Rango(expr);
+                }
+
+                else
+                {
+                    Expression final = logical();
+                    if (match(Token.TokenType.LlaveCerrada))
+                    {
+                        return new Rango(expr, final);
+                    }
+
+                    else
+                    {
+                        throw new ERROR(ERROR.ErrorType.SyntaxError, " Sequences must be inclosed in brances , in line " + currentLine);
+                    }
+                }
+            }
+
+            return expr;
+        }
         private Expression logical()
         {
             Expression expr = comparison();
@@ -213,7 +243,7 @@ namespace Wall_E
 
                 Expression rigth = comparison();
 
-                expr = new Expression.Binary(left, operador, rigth);
+                expr = new Binary(left, operador, rigth);
             }
 
             return expr;
@@ -233,7 +263,7 @@ namespace Wall_E
 
                 Expression rigth = term();
 
-                expr = new Expression.Binary(left, operador, rigth);
+                expr = new Binary(left, operador, rigth);
             }
 
             return expr;
@@ -253,7 +283,7 @@ namespace Wall_E
 
                 Expression rigth = factor();
 
-                expr = new Expression.Binary(left, operador, rigth);
+                expr = new Binary(left, operador, rigth);
             }
 
             return expr;
@@ -273,7 +303,7 @@ namespace Wall_E
 
                 Expression rigth = mod();
 
-                expr = new Expression.Binary(left, operador, rigth);
+                expr = new Binary(left, operador, rigth);
             }
 
             return expr;
@@ -291,7 +321,7 @@ namespace Wall_E
 
                 Expression rigth = unary();
 
-                expr = new Expression.Binary(left, operador, rigth);
+                expr = new Binary(left, operador, rigth);
             }
 
             return expr;
@@ -303,9 +333,9 @@ namespace Wall_E
             {
                 Token operador = advance();
 
-                Expression rigth = expression();
+                Expression rigth = logical();
 
-                return new Expression.Unary(operador, rigth);
+                return new Unary(operador, rigth);
             }
 
             return ifStatement();
@@ -332,7 +362,7 @@ namespace Wall_E
 
                 Expression elseBody = expression();
 
-                return new Statement.IfStatement(condicion, thenBody, elseBody);
+                return new IfStatement(condicion, thenBody, elseBody);
             }
 
             return letStatement();
@@ -345,21 +375,21 @@ namespace Wall_E
             {
                 advance();
 
-                List<Expression.Assign> letBody = Variables();
+                List<Assign> letBody = Variables();
 
                 consume(Token.TokenType.In, " Expected 'in' after expression in line " + currentLine + " in " + current);
 
                 Expression inBody = expression();
 
-                return new Statement.LetIn(letBody, inBody);
+                return new LetIn(letBody, inBody);
             }
 
-            return call();
+            return color();
         }
 
-        private List<Expression.Assign> Variables()
+        private List<Assign> Variables()
         {
-            List<Expression.Assign> answer = new List<Expression.Assign>();
+            List<Assign> answer = new List<Assign>();
 
             while (!match(Token.TokenType.In))
             {
@@ -386,10 +416,30 @@ namespace Wall_E
 
                 consume(Token.TokenType.PuntoYComa, " Expect ';'  after expression in line " + currentLine + " in " + current);
 
-                answer.Add(new Expression.Assign(name, expr));
+                answer.Add(new Assign(name, expr));
             }
 
             return answer;
+        }
+
+
+        private Expression color()
+        {
+            if (match(Token.TokenType.Color))
+            {
+                advance();
+                string color = (string)tokens[current].value;
+                consume(Token.TokenType.Identificador, " Expected identify as a color in line " + currentLine + " in " + current);
+                return new Colors(color);
+            }
+
+            if (match(Token.TokenType.Restore))
+            {
+                advance();
+                return new Restore();
+            }
+
+            return call();
         }
 
         private Expression call()
@@ -400,7 +450,7 @@ namespace Wall_E
                 {
                     string name = (string)advance().value;
 
-                    Statement.Function function = Functions.Get(name);
+                    Function function = Functions.Get(name);
 
                     if (name == "draw")
                     {
@@ -413,29 +463,29 @@ namespace Wall_E
                                 throw new ERROR(ERROR.ErrorType.SyntaxError, " Cannot make a statement as arguments of the function call in line " + currentLine + " in " + current);
                             }
 
-                            if (auxseq is Expression.Sequence)
+                            if (auxseq is Sequence)
                             {
-                                Expression.Sequence seq = (Expression.Sequence)auxseq;
+                                Sequence seq = (Sequence)auxseq;
 
                                 if (match(Token.TokenType.Asign))
                                 {
                                     throw new ERROR(ERROR.ErrorType.SyntaxError, " Functions cannot be redefined");
                                 }
 
-                                return new Expression.Call(name, seq, function);
+                                return new Call(name, seq, function);
                             }
 
                             if (auxseq is not null)
                             {
                                 List<Expression> list = new() { auxseq };
-                                Expression.Sequence seq = new Expression.Sequence(list);
+                                Sequence seq = new Sequence(list);
 
                                 if (match(Token.TokenType.Asign))
                                 {
                                     throw new ERROR(ERROR.ErrorType.SyntaxError, " Functions cannot be redefined");
                                 }
 
-                                return new Expression.Call(name, seq, function);
+                                return new Call(name, seq, function);
                             }
                         }
 
@@ -448,14 +498,14 @@ namespace Wall_E
                             throw new ERROR(ERROR.ErrorType.SyntaxError, " Cannot make a statement as arguments of the function call in line " + currentLine + " in " + current);
                         }
 
-                        if (aux is Expression.Sequence)
+                        if (aux is Sequence)
                         {
                             throw new ERROR(ERROR.ErrorType.SyntaxError, " Expected '{' before expression in line " + currentLine + " in " + count);
                         }
 
                         List<Expression> list1 = new() { aux };
 
-                        Expression.Sequence sequence = new Expression.Sequence(list1);
+                        Sequence sequence = new Sequence(list1);
 
                         string message = "";
 
@@ -469,7 +519,7 @@ namespace Wall_E
                             throw new ERROR(ERROR.ErrorType.SyntaxError, " Functions cannot be redefined");
                         }
 
-                        return new Expression.Call(name, sequence, function, message);
+                        return new Call(name, sequence, function, message);
 
                     }
 
@@ -482,31 +532,27 @@ namespace Wall_E
                             throw new ERROR(ERROR.ErrorType.SyntaxError, " Cannot make a statement as arguments of the function call in line " + currentLine + " in " + current);
                         }
 
-                        if (expr is Expression.Sequence)
+                        if (expr is Sequence s)
                         {
-                            Expression.Sequence seq = (Expression.Sequence)expr;
-
                             if (match(Token.TokenType.Asign))
                             {
                                 throw new ERROR(ERROR.ErrorType.SyntaxError, " Functions cannot be redefined");
                             }
 
-                            return new Expression.Call(name, seq, function);
+                            return new Call(name, s, function);
                         }
 
-                        if (expr is not null)
+                        List<Expression> list2 = new() { expr };
+
+                        Sequence seq = new Sequence(list2);
+
+                        if (match(Token.TokenType.Asign))
                         {
-                            List<Expression> list2 = new() { expr };
-
-                            Expression.Sequence seq = new Expression.Sequence(list2);
-
-                            if (match(Token.TokenType.Asign))
-                            {
-                                throw new ERROR(ERROR.ErrorType.SyntaxError, " Functions cannot be redefined");
-                            }
-
-                            return new Expression.Call(name, seq, function);
+                            throw new ERROR(ERROR.ErrorType.SyntaxError, " Functions cannot be redefined");
                         }
+
+                        return new Call(name, seq, function);
+
 
                     }
 
@@ -515,33 +561,6 @@ namespace Wall_E
             }
             return stm();
         }
-
-        private Expression var()
-        {
-            if (match(Token.TokenType.Identificador))
-            {
-                Token name = advance();
-
-                if ((tokens[current - 2].type == Token.TokenType.PuntoYComa || current == 1) && match(Token.TokenType.Asign))
-                {
-                    advance();
-
-                    Expression value = expression();
-
-                    if (value is Statement)
-                    {
-                        throw new ERROR(ERROR.ErrorType.SyntaxError, " Invalid expression as assign of value in line " + currentLine + " in " + current);
-                    }
-
-                    return new Expression.Assign(name, value);
-                }
-
-                return new Expression.Variable(name);
-            }
-
-            return primary();
-        }
-
         Expression stm()
         {
             if (match(Token.TokenType.Identificador))
@@ -552,7 +571,7 @@ namespace Wall_E
 
                 if (checkValue(a))
                 {
-                    string type = advance().value;
+                    string type = (string)advance().value;
 
                     if (checkValue(b))
                     {
@@ -560,11 +579,11 @@ namespace Wall_E
                         advance();
                     }
 
-                    string name = tokens[current].value;
+                    string name = (string)tokens[current].value;
 
                     consume(Token.TokenType.Identificador, " Expected identifier as a variable name in line " + currentLine + " in " + current);
 
-                    return new Statement.VarDeclaration(type, name);
+                    return new VarDeclaration(type, name);
                 }
 
             }
@@ -572,23 +591,58 @@ namespace Wall_E
             return var();
         }
 
+        private Expression var()
+        {
+            if (match(Token.TokenType.Identificador))
+            {
+                Token name = advance();
+
+                if ((current == 1 || tokens[current - 2].type == Token.TokenType.PuntoYComa) && match(Token.TokenType.Asign))
+                {
+                    advance();
+
+                    Expression value = expression();
+
+                    if (value is DecSequence || value is VarDeclaration)
+                    {
+                        throw new ERROR(ERROR.ErrorType.SyntaxError, " Invalid expression as assign of value in line " + currentLine + " in " + current);
+                    }
+
+                    return new Assign(name, value);
+                }
+
+                return new Variable(name);
+            }
+
+            return primary();
+        }
+
+
+
         private Expression primary()
         {
             Token.TokenType[] a = { Token.TokenType.Number, Token.TokenType.String };
 
             if (match(a))
             {
-                return new Expression.Literal(advance().value);
+                return new Literal(advance().value);
             }
 
             if (match(Token.TokenType.UnderScore))
             {
-                return new Expression.Variable(advance());
+                return new Variable(advance());
             }
 
             if (match(Token.TokenType.ParentesisAbierto))
             {
                 advance();
+
+                if (match(Token.TokenType.ParentesisCerrado))
+                {
+                    advance();
+                    List<Expression> args = new();
+                    return new Sequence(args);
+                }
 
                 Expression expr = expression();
 
@@ -600,6 +654,13 @@ namespace Wall_E
             if (match(Token.TokenType.LlaveAbierta))
             {
                 advance();
+
+                if (match(Token.TokenType.LlaveCerrada))
+                {
+                    advance();
+                    List<Expression> args = new();
+                    return new Sequence(args);
+                }
 
                 Expression expr = expression();
 

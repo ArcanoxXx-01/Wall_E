@@ -194,6 +194,7 @@ namespace Wall_E
                     numero = numero + input[i];
                     int ContadorDePuntos = 0;
                     bool valido = true;
+                    bool Add = false;
 
                     for (int j = i + 1; j < input.Length; j++)
                     {
@@ -207,6 +208,25 @@ namespace Wall_E
 
                         if (input[j] == '.')
                         {
+                            if (input.Length > j + 2)
+                            {
+                                if (input[j + 1] == '.' && input[j + 2] == '.')
+                                {
+                                    if (ContadorDePuntos != 0)
+                                    {
+                                        errores.Add(new ERROR(ERROR.ErrorType.LexicalError, " Sequences of type '...' only receives ints like values"));
+                                        Add = true;
+                                        i = j + 2;
+                                        break;
+                                    }
+                                    tokens.Add(new Token(Token.TokenType.Number, double.Parse(numero)));
+                                    tokens.Add(new Token(Token.TokenType.ThreePoints, ""));
+                                    Add = true;
+                                    i = j + 2;
+                                    break;
+                                }
+                            }
+
                             numero += input[j];
                             i = j;
                             ContadorDePuntos++;
@@ -236,7 +256,7 @@ namespace Wall_E
                         break;
                     }
 
-                    if (valido == false)
+                    if (!valido)
                     {
                         ERROR error = new ERROR(ERROR.ErrorType.LexicalError, numero + " is not a valid token");
                         errores.Add(error);
@@ -249,8 +269,10 @@ namespace Wall_E
                         errores.Add(error);
                         continue;
                     }
-
-                    tokens.Add(new Token(Token.TokenType.Number, numero));
+                    if (!Add)
+                    {
+                        tokens.Add(new Token(Token.TokenType.Number, double.Parse(numero)));
+                    }
                     continue;
                 }
 
@@ -335,6 +357,24 @@ namespace Wall_E
                     {
                         tokens.Add(new Token(Token.TokenType.In, ""));
                         continue;
+                    }
+
+                    if (a == "color")
+                    {
+                        tokens.Add(new Token(Token.TokenType.Color, ""));
+                        continue;
+                    }
+
+                    if (a == "restore")
+                    {
+                        tokens.Add(new Token(Token.TokenType.Restore, ""));
+                        continue;
+                    }
+
+                    if(a=="import")
+                    {
+                        tokens.Add(new Token(Token.TokenType.Import, ""));
+                        continue; 
                     }
 
                     tokens.Add(new Token(Token.TokenType.Identificador, a));

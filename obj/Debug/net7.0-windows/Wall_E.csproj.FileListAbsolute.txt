@@ -26,3 +26,17 @@ C:\Users\Glenda\Desktop\Nueva carpeta (2)\obj\Debug\net7.0-windows\refint\Wall_E
 C:\Users\Glenda\Desktop\Nueva carpeta (2)\obj\Debug\net7.0-windows\Wall_E.pdb
 C:\Users\Glenda\Desktop\Nueva carpeta (2)\obj\Debug\net7.0-windows\Wall_E.genruntimeconfig.cache
 C:\Users\Glenda\Desktop\Nueva carpeta (2)\obj\Debug\net7.0-windows\ref\Wall_E.dll
+C:\Users\Glenda\Desktop\Nueva carpeta (2)\Wall_E\bin\Debug\net7.0-windows\Wall_E.exe
+C:\Users\Glenda\Desktop\Nueva carpeta (2)\Wall_E\bin\Debug\net7.0-windows\Wall_E.deps.json
+C:\Users\Glenda\Desktop\Nueva carpeta (2)\Wall_E\bin\Debug\net7.0-windows\Wall_E.runtimeconfig.json
+C:\Users\Glenda\Desktop\Nueva carpeta (2)\Wall_E\bin\Debug\net7.0-windows\Wall_E.dll
+C:\Users\Glenda\Desktop\Nueva carpeta (2)\Wall_E\bin\Debug\net7.0-windows\Wall_E.pdb
+C:\Users\Glenda\Desktop\Nueva carpeta (2)\Wall_E\obj\Debug\net7.0-windows\Wall_E.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Glenda\Desktop\Nueva carpeta (2)\Wall_E\obj\Debug\net7.0-windows\Wall_E.AssemblyInfoInputs.cache
+C:\Users\Glenda\Desktop\Nueva carpeta (2)\Wall_E\obj\Debug\net7.0-windows\Wall_E.AssemblyInfo.cs
+C:\Users\Glenda\Desktop\Nueva carpeta (2)\Wall_E\obj\Debug\net7.0-windows\Wall_E.csproj.CoreCompileInputs.cache
+C:\Users\Glenda\Desktop\Nueva carpeta (2)\Wall_E\obj\Debug\net7.0-windows\Wall_E.dll
+C:\Users\Glenda\Desktop\Nueva carpeta (2)\Wall_E\obj\Debug\net7.0-windows\refint\Wall_E.dll
+C:\Users\Glenda\Desktop\Nueva carpeta (2)\Wall_E\obj\Debug\net7.0-windows\Wall_E.pdb
+C:\Users\Glenda\Desktop\Nueva carpeta (2)\Wall_E\obj\Debug\net7.0-windows\Wall_E.genruntimeconfig.cache
+C:\Users\Glenda\Desktop\Nueva carpeta (2)\Wall_E\obj\Debug\net7.0-windows\ref\Wall_E.dll

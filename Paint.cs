@@ -1,3 +1,5 @@
+using System.Drawing.Design;
+
 namespace Wall_E
 {
     public class Paint : IPaint
@@ -19,25 +21,26 @@ namespace Wall_E
 
         public int Width => width;
         public int Height => height;
-        public void DrawPoint(Point p1)
+        public void DrawPoint(Point p1, Color color)
         {
             float x = width / 2 + p1.x;
             float y = height / 2 - p1.y;
+            pen.Color = color;
             graphics.DrawEllipse(pen, x - 1f, y - 1f, 2f, 2f);
             return;
         }
 
-        public void DrawCircle(Circle c1)
+        public void DrawCircle(Circle c1, Color color)
         {
             float xcentro = width / 2 + c1.centro.x;
             float ycentro = height / 2 - c1.centro.y;
             float r = c1.radio;
-
+            pen.Color = color;
             graphics.DrawEllipse(pen, xcentro - r, ycentro - r, 2 * r, 2 * r);
             return;
         }
 
-        public void DrawLine(Line l1)
+        public void DrawLine(Line l1, Color color)
         {
             float x1 = width / 2 + l1.p1.x;
             float y1 = height / 2 - l1.p1.y;
@@ -48,6 +51,7 @@ namespace Wall_E
             {
                 y1 = 0;
                 y2 = 1000;
+                pen.Color = color;
                 graphics.DrawLine(pen, new PointF(x1, y1), new PointF(x1, y2));
                 return;
             }
@@ -58,23 +62,23 @@ namespace Wall_E
             float yInicio = n;
             float xFinal = 1000;
             float yFinal = 1000 * pendiente + n;
-
+            pen.Color = color;
             graphics.DrawLine(pen, new PointF(xInicio, yInicio), new PointF(xFinal, yFinal));
             return;
         }
 
-        public void DrawSegment(Segment s1)
+        public void DrawSegment(Segment s1, Color color)
         {
             float x1 = s1.p1.x + width / 2;
             float y1 = height / 2 - s1.p1.y;
             float x2 = width / 2 + s1.p2.x;
             float y2 = height / 2 - s1.p2.y;
-
+            pen.Color = color;
             graphics.DrawLine(pen, new PointF(x1, y1), new PointF(x2, y2));
             return;
         }
 
-        public void DrawRay(Ray r1)
+        public void DrawRay(Ray r1, Color color)
         {
             float xinicio = r1.inicio.x + width / 2;
             float yinicio = height / 2 - r1.inicio.y;
@@ -85,6 +89,7 @@ namespace Wall_E
             {
                 if (yinicio > y) y = 0;
                 else y = 1000;
+                pen.Color = color;
                 graphics.DrawLine(pen, new PointF(xinicio, yinicio), new PointF(x, y));
                 return;
             }
@@ -94,10 +99,11 @@ namespace Wall_E
             if (xinicio > x) x = 0;
             else x = 1000;
             y = x * pendiente + n;
+            pen.Color = color;
             graphics.DrawLine(pen, new PointF(xinicio, yinicio), new PointF(x, y));
         }
 
-        public void DrawArc(Arc a1)
+        public void DrawArc(Arc a1, Color color)
         {
             float xcentro = a1.centro.x + width / 2;
             float ycentro = -a1.centro.y + height / 2;
@@ -106,8 +112,17 @@ namespace Wall_E
             double AngleFinal = a1.AngleFinal;
             int AInicGrados = (int)(AngleInicio / Math.PI * 180);
             int AFinGrados = (int)(AngleFinal / Math.PI * 180);
+            pen.Color = color;
+            graphics.DrawArc(pen, xcentro - r, ycentro - r, 2 * r, 2 * r, -1 * AInicGrados, -AInicGrados + AFinGrados);
+        }
 
-            graphics.DrawArc(pen, xcentro - r, ycentro - r, 2 * r, 2 * r, -1 * AInicGrados, AInicGrados - AFinGrados);
+        public void DrawSeq(Seq sequence, Color color)
+        {
+            foreach (object? obj in sequence)
+            {
+                if (obj is IDrawable d)
+                    d.Draw(this, color);
+            }
         }
     }
 }
