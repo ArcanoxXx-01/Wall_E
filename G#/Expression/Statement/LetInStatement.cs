@@ -1,10 +1,10 @@
 namespace Wall_E;
 public class LetIn : Statement
 {
-    public List<Assign> letBody { get; private set; }
+    public List<Expression> letBody { get; private set; }
     public Expression inBody { get; private set; }
     public Dictionary<string, object> variables;
-    public LetIn(List<Assign> letBody, Expression inBody)
+    public LetIn(List<Expression> letBody, Expression inBody)
     {
         this.letBody = letBody;
         this.inBody = inBody;
@@ -13,25 +13,21 @@ public class LetIn : Statement
 
     public override object Visit(Dictionary<string, object> values)
     {
-        foreach (Assign a in letBody)
+        foreach (var x in values)
         {
-            if (variables.ContainsKey((string)a.name.value) || values.ContainsKey((string)a.name.value))
-            {
-                Evaluator.errors.Add(new ERROR(ERROR.ErrorType.SemanticError, " Variable " + a.name.value + " already has been declared "));
-                return null!;
-            }
-
-            object value = Evaluator.GetValue(a.value, values);
-            variables.Add((string)a.name.value, value);
-            values.Add((string)a.name.value, value);
+            variables.Add(x.Key, x.Value);
+        }
+        foreach (Expression a in letBody)
+        {
+            a.Visit(variables);
         }
 
-        object letbody = Evaluator.GetValue(inBody, values);
-        foreach (var x in variables)
+        object inbody = Evaluator.GetValue(inBody, variables);
+        foreach (var x in values)
         {
-            values.Remove(x.Key);
+            variables.Remove(x.Key);
         }
-
-        return letbody;
+        
+        return inbody;
     }
 }

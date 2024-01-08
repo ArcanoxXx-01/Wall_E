@@ -189,16 +189,23 @@ public class Call : Expression
         {
             if (obj is Seq seq)
             {
-                for (int i = 0; i < seq.count; i++)
+                if (seq.count == -1)
                 {
-                    if (seq[i] is IDrawable idraw)
-                    {
-                        continue;
-                    }
-                    Evaluator.errors.Add(new ERROR(ERROR.ErrorType.SemanticError, " Object " + seq[i] + " in sequence " + obj + " is not drawable"));
-                    return null!;
+                    Evaluator.errors.Add(new ERROR(ERROR.ErrorType.SemanticError, " Object " + seq + " is not drawable. Infinites sequences are not drawables "));
                 }
-                Evaluator.Dibuja.Add((seq, Evaluator.colors.Peek()));
+                else
+                {
+                    for (int i = 0; i < seq.count; i++)
+                    {
+                        if (seq[i] is IDrawable idraw)
+                        {
+                            continue;
+                        }
+                        else Evaluator.errors.Add(new ERROR(ERROR.ErrorType.SemanticError, " Object " + seq[i] + " in sequence " + obj + " is not drawable"));
+                        return null!;
+                    }
+                    Evaluator.Dibuja.Add((seq, Evaluator.colors.Peek()));
+                }
             }
             if (obj is IDrawable a)
             {

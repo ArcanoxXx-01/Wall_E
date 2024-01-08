@@ -3,11 +3,12 @@ namespace Wall_E
     public class Evaluator
     {
         public Evaluator(IPaint Paint, IAplication App, string Code)
-        {   
-            Functions f=new Functions();
+        {
+            Functions f = new Functions();
             this.Code = Code;
             this.Paint = Paint;
             this.App = App;
+            Functions.Fun();
             expressions = GetExpressions(Code);
             values = new();
             Dibuja = new();
@@ -32,8 +33,6 @@ namespace Wall_E
 
         private List<Expression> GetExpressions(string Code)
         {
-            Functions.Fun();
-
             Tokenizer tokenizer = new Tokenizer(Code);
             if (tokenizer.errores.Count != 0)
             {
@@ -54,7 +53,27 @@ namespace Wall_E
                     return null!;
                 }
 
-                return parser.exprs;
+                if (parser.imports.Count != 0)
+                {
+                    List<Expression> result = new();
+                    for (int i = 0; i < parser.exprs.Count; i++)
+                    {
+                        if (parser.exprs[i] is Import import)
+                        {
+                            string code = Path.GetFileName(File.ReadAllText(import.path));
+                            List<Expression> exprs = GetExpressions(code);
+                            foreach (var e in exprs)
+                            {
+                                result.Add(e);
+                            }
+                        }
+                        else result.Add(parser.exprs[i]);
+                    }
+
+                    return result;
+                }
+
+                else return parser.exprs;
             }
         }
 
@@ -120,7 +139,7 @@ namespace Wall_E
             {
                 return let.Visit(variables);
             }
-            if(expr is Rango rango)
+            if (expr is Rango rango)
             {
                 return rango.Visit(variables);
             }

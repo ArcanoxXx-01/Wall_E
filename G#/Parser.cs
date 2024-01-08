@@ -4,6 +4,7 @@ namespace Wall_E
     public class Parser
     {
         public List<Token> tokens { get; private set; }
+        public List<Import> imports { get; private set; }
         int current = 0;
         int currentLine = 1;
         public List<Expression> exprs { get; private set; }
@@ -11,6 +12,7 @@ namespace Wall_E
         public Parser(List<Token> tokens)
         {
             this.tokens = tokens;
+            imports = new();
             exprs = new();
         }
 
@@ -338,6 +340,21 @@ namespace Wall_E
                 return new Unary(operador, rigth);
             }
 
+            return import();
+        }
+
+        private Expression import()
+        {
+            if (match(Token.TokenType.Import))
+            {
+                advance();
+                string path = (string)tokens[current].value;
+                consume(Token.TokenType.String, " Expected string path after expression in line " + currentLine + " in " + current);
+                Import import=new Import(path);
+                imports.Add(import);
+                return import;
+            }
+
             return ifStatement();
         }
 
@@ -375,7 +392,7 @@ namespace Wall_E
             {
                 advance();
 
-                List<Assign> letBody = Variables();
+                List<Expression> letBody = Variables();
 
                 consume(Token.TokenType.In, " Expected 'in' after expression in line " + currentLine + " in " + current);
 
@@ -387,36 +404,51 @@ namespace Wall_E
             return color();
         }
 
-        private List<Assign> Variables()
+        private List<Expression> Variables()
         {
-            List<Assign> answer = new List<Assign>();
+            List<Expression> answer = new List<Expression>();
 
             while (!match(Token.TokenType.In))
             {
-                Token name = new Token(Token.TokenType.Identificador, "");
-
-                if (match(Token.TokenType.Identificador))
+                Expression expr = expression();
+                if (expr is DecSequence s)
                 {
-                    name = advance();
+                    answer.Add(s);
+                    consume(Token.TokenType.PuntoYComa, " Expect ';'  after expression in line " + currentLine + " in " + current);
+                    continue;
+                }
+
+                else if (expr is Assign a)
+                {
+                    answer.Add(a);
+                    consume(Token.TokenType.PuntoYComa, " Expect ';'  after expression in line " + currentLine + " in " + current);
+                    continue;
                 }
 
                 else
                 {
-                    throw new ERROR(ERROR.ErrorType.SyntaxError, " Expect a variable name after expression in line " + currentLine + " in " + current);
+                    throw new ERROR(ERROR.ErrorType.SyntaxError, " Expected variable declaration as argument in line " + currentLine + " in " + current);
                 }
+                // Token name = new Token(Token.TokenType.Identificador, "");
 
-                consume(Token.TokenType.Asign, " Expect '=' after variable name in line " + currentLine + " in " + current);
+                // if (match(Token.TokenType.Identificador))
+                // {
+                //     name = advance();
+                // }
 
-                Expression expr = expression();
+                // else
+                // {
+                //     throw new ERROR(ERROR.ErrorType.SyntaxError, " Expect a variable name after expression in line " + currentLine + " in " + current);
+                // }
 
-                if (expr is Statement)
-                {
-                    throw new ERROR(ERROR.ErrorType.SyntaxError, " Invalid expression as assign of value in line " + currentLine + " in " + current);
-                }
+                // consume(Token.TokenType.Asign, " Expect '=' after variable name in line " + currentLine + " in " + current);
 
-                consume(Token.TokenType.PuntoYComa, " Expect ';'  after expression in line " + currentLine + " in " + current);
+                // Expression expr = expression();
 
-                answer.Add(new Assign(name, expr));
+                // if (expr is Statement)
+                // {
+                //     throw new ERROR(ERROR.ErrorType.SyntaxError, " Invalid expression as assign of value in line " + currentLine + " in " + current);
+                // }
             }
 
             return answer;
@@ -597,13 +629,13 @@ namespace Wall_E
             {
                 Token name = advance();
 
-                if ((current == 1 || tokens[current - 2].type == Token.TokenType.PuntoYComa) && match(Token.TokenType.Asign))
+                if ((current == 1 || tokens[current - 2].type == Token.TokenType.PuntoYComa || tokens[current - 2].type == Token.TokenType.Let) && match(Token.TokenType.Asign))
                 {
                     advance();
 
                     Expression value = expression();
 
-                    if (value is DecSequence || value is VarDeclaration)
+                    if (value is DecSequence || value is VarDeclaration || value is Import)
                     {
                         throw new ERROR(ERROR.ErrorType.SyntaxError, " Invalid expression as assign of value in line " + currentLine + " in " + current);
                     }
