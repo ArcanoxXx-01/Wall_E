@@ -41,7 +41,7 @@ public partial class Aplication : Form, IAplication
                 {
                     foreach (var t in Evaluator.Dibuja)
                     {
-                        t.Item1.Draw(paint, t.Item2);
+                        t.Item1.Draw(paint, t.Item2,t.Item3);
                     }
                 }
                 Plano.Image = map;

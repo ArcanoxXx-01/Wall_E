@@ -1,7 +1,7 @@
 namespace Wall_E;
    public abstract class Figure : IDrawable, IIntersectable<Figure>
     {
-        public virtual void Draw(IPaint paint, Color color)
+        public virtual void Draw(IPaint paint, Color color,string? message)
         {
 
         }

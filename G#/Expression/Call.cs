@@ -204,12 +204,12 @@ public class Call : Expression
                         else Evaluator.errors.Add(new ERROR(ERROR.ErrorType.SemanticError, " Object " + seq[i] + " in sequence " + obj + " is not drawable"));
                         return null!;
                     }
-                    Evaluator.Dibuja.Add((seq, Evaluator.colors.Peek()));
+                    Evaluator.Dibuja.Add((seq, Evaluator.colors.Peek(),message));
                 }
             }
             if (obj is IDrawable a)
             {
-                Evaluator.Dibuja.Add((a, Evaluator.colors.Peek()));
+                Evaluator.Dibuja.Add((a, Evaluator.colors.Peek(),message));
             }
 
             else Evaluator.errors.Add(new ERROR(ERROR.ErrorType.SemanticError, " Object " + obj + " is not drawable"));

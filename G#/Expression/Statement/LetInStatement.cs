@@ -23,11 +23,7 @@ public class LetIn : Statement
         }
 
         object inbody = Evaluator.GetValue(inBody, variables);
-        foreach (var x in values)
-        {
-            variables.Remove(x.Key);
-        }
-        
+        variables=new();        
         return inbody;
     }
 }

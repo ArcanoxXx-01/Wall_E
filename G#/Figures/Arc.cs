@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace Wall_E;
 public class Arc : Figure
 {
@@ -30,7 +32,15 @@ public class Arc : Figure
         if (points.Count != 0)
         {
             double AnglePoint = Math.Atan2(points[0].y - centro.y, points[0].x - centro.x);
-            if (AnglePoint >= AngleInicio && AnglePoint <= AngleFinal) return points;
+            if (AngleFinal - AngleInicio < 0)
+            {
+                if (!(AnglePoint <= AngleFinal || AnglePoint >= AngleInicio))
+                {
+                    points.Remove(points[0]);
+                    return points;
+                }
+            }
+            else if (AnglePoint >= AngleInicio && AnglePoint <= AngleFinal) return points;
             else points.Remove(points[0]);
         }
         return points;
@@ -77,9 +87,9 @@ public class Arc : Figure
         return points;
     }
 
-    public override void Draw(IPaint paint, Color color)
+    public override void Draw(IPaint paint, Color color, string? message)
     {
-        paint.DrawArc(this, color);
+        paint.DrawArc(this, color, message);
     }
 
     public override List<Point> RandomPoints()

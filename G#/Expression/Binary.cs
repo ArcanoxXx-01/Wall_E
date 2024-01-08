@@ -221,9 +221,9 @@ public class Binary : Expression
 
     private object Multiplicacion(object left, object rigth)
     {
-        if (left is double && rigth is double)
+        if (left is double  && rigth is double )
 
-            return (double)left * (double)rigth;
+            return Convert.ToDouble(left)*Convert.ToDouble(rigth);
 
         Evaluator.errors.Add(new ERROR(ERROR.ErrorType.SemanticError, " Operator '*' cannot be used between " + left + " and " + rigth));
         return null!;

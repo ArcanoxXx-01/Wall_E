@@ -3,20 +3,21 @@ namespace Wall_E
 {
     public interface IDrawable
     {
-        public void Draw(IPaint p1,Color color);
+        public void Draw(IPaint p1, Color color,string? message);
     }
 
     public interface IPaint
     {
         int Width { get; }
         int Height { get; }
-        public void DrawPoint(Point p1,Color color);
-        public void DrawCircle(Circle c1,Color color);
-        public void DrawLine(Line l1,Color color);
-        public void DrawSegment(Segment s,Color cloro);
-        public void DrawRay(Ray r1,Color color);
-        public void DrawArc(Arc a1,Color color);
-        public void DrawSeq(Seq seq,Color color);
+        public void DrawPoint(Point p1, Color color, string? message);
+        public void DrawCircle(Circle c1, Color color, string? message);
+        public void DrawLine(Line l1, Color color, string? message);
+        public void DrawSegment(Segment s, Color color, string? message);
+        public void DrawRay(Ray r1, Color color, string? message);
+        public void DrawArc(Arc a1, Color color, string? message);
+        public void DrawSeq(Seq seq, Color color, string? message);
+        public void DrawString(string text, float x, float y);
     }
     public interface IIntersectable<T>
     {

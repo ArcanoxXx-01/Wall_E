@@ -41,6 +41,10 @@ public class Colors : Expression
         {
             Evaluator.colors.Push(Color.Orange);
         }
+        else if(color=="brown")
+        {
+            Evaluator.colors.Push(Color.Brown);
+        }
 
         else Evaluator.errors.Add(new ERROR(ERROR.ErrorType.SemanticError, " Invalid color has been insert"));
         return null!;

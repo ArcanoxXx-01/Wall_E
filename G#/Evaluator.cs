@@ -23,7 +23,7 @@ namespace Wall_E
 
         public static Stack<Color> colors = new();
         public static Randoms random = new Randoms();
-        public static List<(IDrawable, Color)> Dibuja = new();
+        public static List<(IDrawable, Color, string)> Dibuja = new();
         public static List<ERROR> errors = new();
         public Dictionary<string, object> values { get; set; }
         public string Code { get; private set; }
@@ -60,11 +60,20 @@ namespace Wall_E
                     {
                         if (parser.exprs[i] is Import import)
                         {
-                            string code = Path.GetFileName(File.ReadAllText(import.path));
-                            List<Expression> exprs = GetExpressions(code);
-                            foreach (var e in exprs)
+                            try
                             {
-                                result.Add(e);
+                                string code = Path.GetFileName(File.ReadAllText(import.path));
+                                List<Expression> exprs = GetExpressions(code);
+                                foreach (var e in exprs)
+                                {
+                                    result.Add(e);
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                App.PrintError(new ERROR(ERROR.ErrorType.SyntaxError, "Error when impporting file."));
+                                App.Print("Check that the file address is correct and that the file is ' .txt '");
+                                return null!;
                             }
                         }
                         else result.Add(parser.exprs[i]);

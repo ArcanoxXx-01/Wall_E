@@ -25,7 +25,7 @@ public class Seq : IEnumerable, IDrawable
     public Seq Rest(int index)
     {
         List<object> seq = new();
-        for (int i = index ; i < values?.Count; i++)
+        for (int i = index; i < values?.Count; i++)
         {
             seq.Add(values[i]);
         }
@@ -55,8 +55,8 @@ public class Seq : IEnumerable, IDrawable
     {
         return values.GetEnumerator();
     }
-    public void Draw(IPaint paint, Color color)
+    public void Draw(IPaint paint, Color color, string? message)
     {
-        paint.DrawSeq(this, color);
+        paint.DrawSeq(this, color, message);
     }
 }
