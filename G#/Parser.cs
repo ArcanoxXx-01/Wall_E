@@ -350,7 +350,7 @@ namespace Wall_E
                 advance();
                 string path = (string)tokens[current].value;
                 consume(Token.TokenType.String, " Expected string path after expression in line " + currentLine + " in " + current);
-                Import import=new Import(path);
+                Import import = new Import(path);
                 imports.Add(import);
                 return import;
             }
@@ -414,17 +414,22 @@ namespace Wall_E
                 if (expr is DecSequence s)
                 {
                     answer.Add(s);
-                    consume(Token.TokenType.PuntoYComa, " Expect ';'  after expression in line " + currentLine + " in " + current);
+                    consume(Token.TokenType.PuntoYComa, " Expect ';' or 'in' after expression in line " + currentLine + " in " + current);
                     continue;
                 }
 
                 else if (expr is Assign a)
                 {
                     answer.Add(a);
-                    consume(Token.TokenType.PuntoYComa, " Expect ';'  after expression in line " + currentLine + " in " + current);
+                    consume(Token.TokenType.PuntoYComa, " Expect ';' or 'in' after expression in line " + currentLine + " in " + current);
                     continue;
                 }
-
+                else if (expr is VarDeclaration v)
+                {
+                    answer.Add(v);
+                    consume(Token.TokenType.PuntoYComa, " Expect ';' or 'in'  after expression in line " + currentLine + " in " + current);
+                    continue;
+                }
                 else
                 {
                     throw new ERROR(ERROR.ErrorType.SyntaxError, " Expected variable declaration as argument in line " + currentLine + " in " + current);
