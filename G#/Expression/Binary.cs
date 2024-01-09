@@ -199,7 +199,7 @@ public class Binary : Expression
 
         if (left is Seq l && rigth is Seq r)
         {
-            if (l is null) return null!;
+            if (l.count==0) return null!;
             else
             {
                 return l.SumaSeq(r);

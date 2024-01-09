@@ -44,7 +44,7 @@ public class Seq : IEnumerable, IDrawable
             obj.Add(t);
         }
 
-        return new Seq(obj, false);
+        return new Seq(obj, IsInfinite||seq.IsInfinite);
     }
     public IEnumerator GetEnumerator()
     {
