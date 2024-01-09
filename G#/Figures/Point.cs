@@ -54,7 +54,7 @@ public class Point : Figure, IEquatable<Point>
     public List<Point> Intersect(Line l1)
     {
         List<Point> points = new();
-        if (l1.p1.x == l1.p2.x && l1.p1.x == x)
+        if (l1.p1.x == l1.p2.x && l1.p1.x >= x - 0.01 && l1.p1.x <= x + 0.01)
         {
             points.Add(this);
             return points;

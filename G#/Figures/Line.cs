@@ -33,9 +33,9 @@ public class Line : Figure
     public List<Point> Intersect(Line l1)
     {
         List<Point> points = new();
-        if (p1.x == p2.x)
+        if (p1.x >= p2.x - 0.01 && p1.x <= p2.x + 0.01)
         {
-            if (l1.p1.x == l1.p2.x) return points;
+            if (l1.p1.x >= l1.p2.x - 0.01 && l1.p1.x <= l1.p2.x + 0.01) return points;
 
             else
             {
@@ -47,15 +47,15 @@ public class Line : Figure
             }
         }
 
-        else if (l1.p1.x == l1.p2.x)
+        else if (l1.p1.x >= l1.p2.x - 0.01 && l1.p1.x <= l1.p2.x + 0.01)
         {
             float x1 = l1.p1.x;
             float n = p1.y - pendiente * p1.x;
             float y1 = pendiente * x1 + n;
-            points.Add(new Point(x1,y1));
+            points.Add(new Point(x1, y1));
             return points;
         }
-        
+
         if (pendiente == l1.pendiente) return points;
         float n1 = l1.p1.y - l1.pendiente * l1.p1.x;
         float n2 = p1.y - pendiente * p1.x;

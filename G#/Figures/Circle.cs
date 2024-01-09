@@ -89,7 +89,7 @@ public class Circle : Figure
 
         if (radio + c1.radio < centro.Measure(c1.centro)) return points;
 
-        if (centro.Measure(c1.centro) == radio - c1.radio || centro.Measure(c1.centro) == -(radio - c1.radio))
+        if ((centro.Measure(c1.centro) >= radio - c1.radio - 0.01 && centro.Measure(c1.centro) <= radio - c1.radio + 0.01) || (centro.Measure(c1.centro) >= -(radio - c1.radio) - 0.01 && centro.Measure(c1.centro) <= -(radio - c1.radio) + 0.01))
         {
             Line l1 = new Line(centro, c1.centro);
             List<Point> listthis = Intersect(l1);
@@ -113,7 +113,7 @@ public class Circle : Figure
             return points;
         }
 
-        if (radio + c1.radio == centro.Measure(c1.centro))
+        if (radio + c1.radio <= centro.Measure(c1.centro) + 0.01 && radio + c1.radio >= centro.Measure(c1.centro) - 0.01)
         {
             float razon = radio / c1.radio;
             float x1 = (centro.x + razon * c1.centro.x) / (razon + 1);
